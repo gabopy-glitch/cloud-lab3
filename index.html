@@ -1,9 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mi primera app cloud</title>
+    <title>Gestión de Tareas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 10px; background: white; padding: 15px; border-radius: 8px;}
+        input, button { margin: 5px 0; padding: 8px; }
+        #resultado { margin-top: 15px; background-color: #f4f4f4; padding: 10px; border-radius: 5px; color: black; }
+    </style>
 </head>
 <body>
-    <h1>Hola desde la nube</h1>
+    <h2 style="color: black;">Gestión de Tareas (Frontend)</h2>
+    <input id="titulo" placeholder="Título">
+    <input id="descripcion" placeholder="Descripción">
+    <button onclick="crearTarea()">Crear Tarea</button>
+    <button onclick="cargarTareas()">Cargar Tareas</button>
+    <div id="resultado"></div>
+
+    <script>
+        const API_URL = "https://two-bags-lick.loca.lt/tareas"; 
+
+        async function crearTarea() {
+            const tituloInput = document.getElementById('titulo').value;
+            const descripcionInput = document.getElementById('descripcion').value;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Bypass-Tunnel-Reminder': 'true' // Evita la pantalla de bloqueo de Localtunnel
+                    },
+                    body: JSON.stringify({
+                        titulo: tituloInput,
+                        descripcion: descripcionInput
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('titulo').value = '';
+                    document.getElementById('descripcion').value = '';
+                    cargarTareas();
+                } else {
+                    alert("Error al crear la tarea.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error de conexión con la API.");
+            }
+        }
+
+        async function cargarTareas() {
+            try {
+                const res = await fetch(API_URL, {
+                    headers: {
+                        'Bypass-Tunnel-Reminder': 'true' // Evita la pantalla de bloqueo de Localtunnel
+                    }
+                });
+                const data = await res.json();
+                document.getElementById('resultado').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('resultado').innerHTML = '<p style="color:red;">Error al cargar. Revisa la consola.</p>';
+            }
+        }
+    </script>
 </body>
 </html>
