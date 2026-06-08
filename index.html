@@ -17,52 +17,48 @@
     <div id="resultado"></div>
 
     <script>
-        const API_URL = "https://cloud-lab3-2ksm.vercel.app/api/tareas"; 
+    // URL definitiva de tu API Serverless en Vercel
+    const API_URL = "https://cloud-lab3-2ksm.vercel.app/api/tareas"; 
 
-        async function crearTarea() {
-            const tituloInput = document.getElementById('titulo').value;
-            const descripcionInput = document.getElementById('descripcion').value;
+    async function crearTarea() {
+        const tituloInput = document.getElementById('titulo').value;
+        const descripcionInput = document.getElementById('descripcion').value;
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Bypass-Tunnel-Reminder': 'true' // Evita la pantalla de bloqueo de Localtunnel
-                    },
-                    body: JSON.stringify({
-                        titulo: tituloInput,
-                        descripcion: descripcionInput
-                    })
-                });
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    titulo: tituloInput,
+                    descripcion: descripcionInput
+                })
+            });
 
-                if (response.ok) {
-                    document.getElementById('titulo').value = '';
-                    document.getElementById('descripcion').value = '';
-                    cargarTareas();
-                } else {
-                    alert("Error al crear la tarea.");
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Error de conexión con la API.");
+            if (response.ok) {
+                document.getElementById('titulo').value = '';
+                document.getElementById('descripcion').value = '';
+                cargarTareas();
+            } else {
+                alert("Error al crear la tarea.");
             }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error de conexión con la API.");
         }
+    }
 
-        async function cargarTareas() {
-            try {
-                const res = await fetch(API_URL, {
-                    headers: {
-                        'Bypass-Tunnel-Reminder': 'true' // Evita la pantalla de bloqueo de Localtunnel
-                    }
-                });
-                const data = await res.json();
-                document.getElementById('resultado').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-            } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('resultado').innerHTML = '<p style="color:red;">Error al cargar. Revisa la consola.</p>';
-            }
+    async function cargarTareas() {
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            document.getElementById('resultado').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+        } catch (error) {
+            console.error("Error:", error);
+            document.getElementById('resultado').innerHTML = '<p style="color:red;">Error al cargar. Revisa la consola.</p>';
         }
-    </script>
+    }
+</script>
 </body>
 </html>
